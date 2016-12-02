@@ -5,7 +5,7 @@ const fs = require('fs-promise');
 const request = require('request-promise');
 
 const source_file = 'data/data.txt';
-const out_file = 'data/results.txt';
+const out_file = 'data/results.json';
 const api_key = process.env.GMAPS_API_KEY;
 
 function getPlaces() {
@@ -55,8 +55,8 @@ function getPlaceID(place) {
 
 function getInfoFromID(placeID) {
     if (placeID === undefined) {
-        return;
-    }    
+        return null;
+    }
     let url = getMapsPlaceIDURL(placeID);
     return request(url)
         .then(data => {
@@ -78,9 +78,6 @@ function getInfoFromID(placeID) {
 }
 
 Promise.map(getPlaces(), getPlaceID).map(getInfoFromID)
-    .then(results => {
-        return results.filter(result => result !== undefined)
-    })
     .then(results => {
         fs.writeFile(out_file, JSON.stringify(results, null, 4));
     })
