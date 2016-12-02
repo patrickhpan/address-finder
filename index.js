@@ -4,7 +4,8 @@ const Promise = require('bluebird');
 const fs = require('fs-promise');
 const request = require('request-promise');
 
-const source_file = 'data/test.txt';
+const source_file = 'data/data.txt';
+const out_file = 'data/results.txt';
 const api_key = process.env.GMAPS_API_KEY;
 
 function getPlaces() {
@@ -78,6 +79,8 @@ function getInfoFromID(placeID) {
 
 Promise.map(getPlaces(), getPlaceID).map(getInfoFromID)
     .then(results => {
-        results = results.filter(result => result !== undefined)
-        console.log(results)
+        return results.filter(result => result !== undefined)
+    })
+    .then(results => {
+        fs.writeFile(out_file, JSON.stringify(results, null, 4));
     })
